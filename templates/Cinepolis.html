@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block container %}
+
+<form id="compraForm">
+    <label for="nombre_persona">Nombre:</label>
+    <input type="text" name="nombre_persona" required><br>
+
+    <label for="num_personas">Cantidad de Compradores:</label>
+    <input type="number" name="num_personas" min="1" required><br>
+
+    <label>Tarjeta CINECO:</label>
+    <label><input type="radio" name="usa_tarjeta_cineco" value="si" required> Sí</label>
+    <label><input type="radio" name="usa_tarjeta_cineco" value="no" required> No</label><br>
+
+    <label for="num_boletos">Cantidad de Boletos:</label>
+    <input type="number" name="num_boletos" min="1" required><br>
+
+    <label for="costo_total">Costo Total:</label>
+    <input type="text" id="costo_total" readonly><br>
+
+    <input type="submit" value="Procesar">
+    <input type="reset" value="Salir">
+</form>
+
+<script>
+    document.getElementById('compraForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(this);
+
+        fetch('/resultado_compra', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                document.getElementById('costo_total').value = data.costo_total;
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+
+<link rel="stylesheet" href="/static/css/style.css">
+{% endblock %}

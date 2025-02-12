@@ -1,6 +1,7 @@
-from flask import Flask, render_template
-
+from flask import Flask, render_template, request, jsonify
 app=Flask(__name__)
+
+
 
 @app.route("/")
 def index():
@@ -50,6 +51,67 @@ def form1():
             </form>
 
             '''
+
+@app.route("/OperasBas")
+def operas():
+    return render_template("OperasBas.html")
+
+@app.route("/resultado", methods=["GET", "POST"])
+def result():
+    if request.method == "POST":
+        num1 = request.form.get("n1")
+        num2 = request.form.get("n2")
+        return "La multiplicacion de {} x {} = {}".format(num1,num2,str(int(num1)*int(num2))) 
+
+
+# -----------------------------------------
+class CompraBoletos:
+    def __init__(self, num_boletos=0, nombre_persona="", num_personas=0, usa_tarjeta_cineco=False):
+        self.num_boletos = num_boletos
+        self.nombre_persona = nombre_persona
+        self.num_personas = num_personas
+        self.usa_tarjeta_cineco = usa_tarjeta_cineco
+
+    def calcular_costo(self):
+        valor_base = 12
+        costo_total = self.num_boletos * valor_base
+
+        # Descuentos por cantidad de boletos
+        if self.num_boletos > 5:
+            costo_total *= 0.85  # 15% de descuento
+        elif 3 <= self.num_boletos <= 5:
+            costo_total *= 0.90  # 10% de descuento
+
+        # Descuento adicional por usar tarjeta CINECO
+        if self.usa_tarjeta_cineco:
+            costo_total *= 0.90  # 10% adicional de descuento
+
+        return costo_total
+
+@app.route("/Cinepolis")
+def compra():
+    return render_template("Cinepolis.html")
+
+@app.route("/resultado_compra", methods=["POST"])
+def resultado_compra():
+    nombre_persona = request.form.get("nombre_persona")
+    num_personas = int(request.form.get("num_personas"))
+    num_boletos = int(request.form.get("num_boletos"))
+    usa_tarjeta_cineco = request.form.get("usa_tarjeta_cineco") == "si"
+
+    max_boletos = num_personas * 7
+    if num_boletos > max_boletos:
+        return jsonify({"error": f"Supera el límite de boletos permitidos ({max_boletos})."})
+
+    compra = CompraBoletos(num_boletos, nombre_persona, num_personas, usa_tarjeta_cineco)
+    costo_total = compra.calcular_costo()
+
+    return jsonify({"costo_total": f"${costo_total:.2f}"})
+
+#-------------------------------------------
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=3000)
