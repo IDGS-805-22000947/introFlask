@@ -1,0 +1,17 @@
+
+{% extends "layout.html" %}
+
+{% block container %}
+{% import "_macros.html" as macros%}
+
+
+<h1>Alumnos</h1>
+<form action="" method="post">
+
+    {{macros.campoNuevo(form.matricula)}}
+    {{macros.campoNuevo(form.Nombre)}}
+    {{macros.campoNuevo(form.Apellido)}}
+    {{macros.campoNuevo(form.email)}}
+    
+</form>
+{%endblock%}
