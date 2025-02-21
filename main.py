@@ -8,8 +8,8 @@ import forms
 
 
 app=Flask(__name__)
-csrf = CSRFProtect
 app.secret_key = 'esta es una clave secreta'
+csrf = CSRFProtect()
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -196,4 +196,5 @@ def resultado_compra():
 
 
 if __name__ == "__main__":
+    csrf.init_app(app)
     app.run(debug=True, port=3000)
