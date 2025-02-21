@@ -1,10 +1,34 @@
 from flask import Flask, render_template, request, jsonify
-
+from flask import g
+from flask import flash
+from flask_wtf.csrf import CSRFProtect
+from datetime import datetime
+import formsZodiaco
 import forms
 
+
 app=Flask(__name__)
+csrf = CSRFProtect
+app.secret_key = 'esta es una clave secreta'
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 
+@app.before_request
+def before_request():
+    print("before 1")
+
+@app.after_request
+def after_request(response):
+    print("after 1")
+    return response
+
+@app.before_request
+def before_request():
+    g.nombre = "Mario"
+    print("before 2")
 
 @app.route("/")
 def index():
@@ -14,19 +38,59 @@ def index():
 # -------------Clase 13/02/2025-------------------------------
 @app.route("/alumnos", methods = ["GET", "POST"])
 def alumnos():
+    print("alumno: {}".format(g.nombre))
     mat = ''
     nom = ''
     ape = ''
     email = ''
     alumno_clase = forms.UserForm(request.form)
-    if request.method == "POST":
+    if request.method == "POST" and alumno_clase.validate():
         mat = alumno_clase.matricula.data
         ape = alumno_clase.apellido.data
         nom = alumno_clase.nombre.data
         email = alumno_clase.email.data
-        print('Nombre: {}'.format(nom))
-    return render_template("Alumnos.html", form = alumno_clase)
+        mensaje = 'Bienvenido {}'.format(nom)
+        flash(mensaje)
+    return render_template("Alumnos.html", form = alumno_clase, mat=mat,nom=nom,ape=ape,email=email)
 #----------------------------------------------------------------
+
+#---------------------Zodiaco Chino 18/02/2025----------------------
+@app.route("/zodiaco", methods=["GET", "POST"])
+def zodiaco():
+    nombre_completo = ''
+    edad = ''
+    signo = ''
+    form_zodiaco = formsZodiaco.ZodiacoForm(request.form)
+
+    if request.method == "POST" and form_zodiaco.validate():
+        nombre = form_zodiaco.nombre.data
+        apaterno = form_zodiaco.apaterno.data
+        amaterno = form_zodiaco.amaterno.data
+        dia = form_zodiaco.dia.data
+        mes = form_zodiaco.mes.data
+        anio = form_zodiaco.anio.data
+
+        nombre_completo = f"{nombre} {apaterno} {amaterno}"
+        hoy = datetime.now()
+        edad = hoy.year - anio - ((hoy.month, hoy.day) < (mes, dia))
+
+        signos_chinos = [
+            'Rata', 'Buey', 'Tigre', 'Conejo', 'Dragon', 'Serpiente',
+            'Caballo', 'Cabra', 'Mono', 'Gallo', 'Perro', 'Cerdo'
+        ]
+
+        #Es para que el ciclo de años sea correcto
+        signo = signos_chinos[(anio - 1900) % 12]
+
+    return render_template(
+        "Zodiaco.html",
+        form=form_zodiaco,
+        nombre_completo=nombre_completo,
+        edad=edad,
+        signo=signo
+    )
+
+#-------------------------------------------------------------------
 @app.route("/ejemplo1")
 def ejemplo1():
     return render_template("ejemplo1.html")

@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block container %}
+{% import "_macros.html" as macros %}
+
+<h1>Zodiaco Chino</h1>
+<div class="row">
+    <div class="col-md-6">
+        <form action="" method="post" novalidate>
+            <div class="row control-group">
+                <div class="form-group col-xs-12 floating-label-form-group controls">
+                    {{ macros.campoNuevo(form.nombre, class_name='form-control') }}
+                </div>
+            </div>
+
+            <div class="row control-group">
+                <div class="form-group col-xs-12 floating-label-form-group controls">
+                    {{ macros.campoNuevo(form.apaterno, class_name='form-control') }}
+                </div>
+            </div>
+
+            <div class="row control-group">
+                <div class="form-group col-xs-12 floating-label-form-group controls">
+                    {{ macros.campoNuevo(form.amaterno, class_name='form-control') }}
+                </div>
+            </div>
+
+            <h3>Fecha de Nacimiento</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    {{ macros.campoNuevo(form.dia, class_name='form-control') }}
+                </div>
+                <div class="col-md-4">
+                    {{ macros.campoNuevo(form.mes, class_name='form-control') }}
+                </div>
+                <div class="col-md-4">
+                    {{ macros.campoNuevo(form.anio, class_name='form-control') }}
+                </div>
+            </div>
+
+            <h3>Sexo</h3>
+            <div class="form-group">
+                {{ form.sexo() }}
+            </div>
+
+            <input type="submit" value="Saber mi signo" class="btn btn-primary" />
+        </form>
+    </div>
+
+    <div class="col-md-6">
+        {% if nombre_completo %}
+            <h2>Hola <strong>{{ nombre_completo }}</strong></h2>
+            <h3>Tienes {{ edad }} años</h3>
+            <h3>Tu signo zodiacal chino es {{ signo }}</h3>
+            <img src="{{ url_for('static', filename='img/' + signo + '.png') }}" alt="{{ signo }}" width="450">
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

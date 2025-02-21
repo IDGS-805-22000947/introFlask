@@ -1,17 +1,38 @@
-
 {% extends "layout.html" %}
 
 {% block container %}
-{% import "_macros.html" as macros%}
-
+{% import "_macros.html" as macros %}
 
 <h1>Alumnos</h1>
-<form action="" method="post">
+<form action="" method="post" novalidate>
+    {{form.csrf_token}}
+        <input type="hidden" name="csrf_token" value="{{csrf_token() }}"/>
+    <div class="row control-group">
+        <div class="form-group col-xs-12 floating-label-form-group controls">
+            {{ macros.campoNuevo(form.matricula, class_name='form-control') }}
+        </div>
+    </div>
+    <div class="row control-group">
+        <div class="form-group col-xs-12 floating-label-form-group controls">
+            {{ macros.campoNuevo(form.nombre, class_name='form-control') }}
+        </div>
+    </div>
+    <div class="row control-group">
+        <div class="form-group col-xs-12 floating-label-form-group controls">
+            {{ macros.campoNuevo(form.apellido, class_name='form-control') }}
+        </div>
+    </div>
+    <div class="row control-group">
+        <div class="form-group col-xs-12 floating-label-form-group controls">
+            {{ macros.campoNuevo(form.email, class_name='form-control') }}
+        </div>
+    </div>
 
-    {{macros.campoNuevo(form.matricula)}}
-    {{macros.campoNuevo(form.Nombre)}}
-    {{macros.campoNuevo(form.Apellido)}}
-    {{macros.campoNuevo(form.email)}}
-    
+    <input type="submit" value="Guardar" class="btn btn-primary"/>
 </form>
-{%endblock%}
+
+<h2>Matricula: {{ mat }}</h2>
+<h2>Nombre: {{ nom }}</h2>
+<h2>Correo: {{ email }}</h2>
+
+{% endblock %}
